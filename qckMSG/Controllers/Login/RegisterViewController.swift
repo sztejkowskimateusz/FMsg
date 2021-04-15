@@ -78,8 +78,11 @@ class RegisterViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.crop.square.fill")
+        imageView.image = UIImage(systemName: "person.fill.questionmark")
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.borderWidth = 3
+        imageView.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
@@ -97,11 +100,9 @@ class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .blue
-        title = "Log In"
+        title = "Rejestracja"
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Rejestracja", style: .done, target: self, action: #selector(didTapRegister))
-        
-        registerButton.addTarget(self, action: #selector(tryToSignIn), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(tryToRegister), for: .touchUpInside)
         
         emailField.delegate = self
         password.delegate = self
@@ -122,7 +123,7 @@ class RegisterViewController: UIViewController {
     }
     
     @objc private func ustawZdjProfilowe() {
-        
+        wyborZdjProfilowego()
     }
     
     override func viewDidLayoutSubviews() {
@@ -138,6 +139,7 @@ class RegisterViewController: UIViewController {
         
         //logo
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        logoImageView.layer.cornerRadius = 90
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
@@ -191,7 +193,7 @@ class RegisterViewController: UIViewController {
         ])
     }
     
-    @objc private func tryToSignIn() {
+    @objc private func tryToRegister() {
         
         emailField.resignFirstResponder()
         password.resignFirstResponder()
@@ -219,24 +221,79 @@ class RegisterViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    @objc private func didTapRegister() {
-        let registerVC = RegisterViewController()
-        registerVC.title = "Utwórz konto"
-        navigationController?.pushViewController(registerVC, animated: true)
-    }
-    
 }
 
 extension RegisterViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        if textField == emailField {
+        if textField == imiePole {
+            nazwiskoPole.becomeFirstResponder()
+        } else if textField == nazwiskoPole {
+            emailField.becomeFirstResponder()
+        } else if textField == emailField {
             password.becomeFirstResponder()
         } else if textField == password {
-            tryToSignIn()
+            tryToRegister()
         }
-        
         return true
     }
+}
+
+extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func wyborZdjProfilowego() {
+        let kontrolkaWyboru = UIAlertController(title: "Zdjęcie profilowe", message: "W jaki sposób chcesz ustawić zdjęcie profilowe?", preferredStyle: .actionSheet)
+        kontrolkaWyboru.addAction(UIAlertAction(
+                                    title: "Anuluj",
+                                    style: .cancel,
+                                    handler: nil))
+        kontrolkaWyboru.addAction(UIAlertAction(
+                                    title: "Wybierz z galerii",
+                                    style: .default,
+                                    handler: { [weak self] _ in
+                                        guard let self = self else {
+                                            return
+                                        }
+                                        self.wybierzZdjZGalerii()
+                                    }))
+        kontrolkaWyboru.addAction(UIAlertAction(
+                                    title: "Zrób zdjęcie",
+                                    style: .default,
+                                    handler: { [weak self ] _ in
+                                        guard let self = self else {
+                                            return
+                                        }
+                                        self.zrobZdjecieAparatem()
+                                    }))
+        present(kontrolkaWyboru, animated: true )
+    }
+    
+    private func zrobZdjecieAparatem() {
+        let vc = UIImagePickerController()
+        vc.sourceType = .camera
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
+    }
+    
+    private func wybierzZdjZGalerii() {
+        let vc = UIImagePickerController()
+        vc.sourceType = .photoLibrary
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+            return
+        }
+        self.logoImageView.image = selectedImage
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
 }
