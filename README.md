@@ -1,4 +1,4 @@
-# FMsg
+# qckMSG
 
 ### Komunikator przeznaczony na urządzenia mobilne, ceniący sobie prywatność oraz ochronę danych swoich użytkowników. 
 
