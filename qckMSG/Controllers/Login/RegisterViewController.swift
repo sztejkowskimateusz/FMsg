@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegisterViewController: UIViewController {
-
+    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
@@ -78,10 +79,8 @@ class RegisterViewController: UIViewController {
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.fill.questionmark")
+        imageView.image = UIImage(systemName: "person.crop.circle.fill.badge.questionmark")
         imageView.contentMode = .scaleAspectFit
-        imageView.layer.borderWidth = 3
-        imageView.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
         imageView.layer.masksToBounds = true
         return imageView
     }()
@@ -139,7 +138,6 @@ class RegisterViewController: UIViewController {
         
         //logo
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.layer.cornerRadius = 90
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
@@ -209,14 +207,42 @@ class RegisterViewController: UIViewController {
               !nazwisko.isEmpty,
               !imie.isEmpty,
               pswd.count >= 6 else {
-            alertSignInError()
+            alertFailedToRegistr()
             return
         }
         
+        DatabaseService.shared.czyUzytkownikIstnieje(with: email) { [weak self] uzytkownikIstnieje in
+              
+            guard let self = self else {
+                return
+            }
+            
+            guard !uzytkownikIstnieje else {
+                self.alertFailedToRegistr(error: "Konto o podanym adresie email już istnieje!")
+                return
+            }
+            
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: pswd) { authResult, error in
+                guard authResult != nil, error == nil else {
+                    print("Nie można utworzyć konta")
+                    return
+                }
+                
+                DatabaseService.shared.utworzUzytkownika(with: ObiektUzytkownika(
+                                                            imie: imie,
+                                                            nazwisko: nazwisko,
+                                                            adresEmail: email))
+                
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
-    private func alertSignInError() {
-        let alert = UIAlertController(title: "Błąd!", message: "Wprowadź poprawne dane wymagane do rejestracji", preferredStyle: .alert)
+    private func alertFailedToRegistr(error: String = "Wprowadź poprawne dane wymagane do rejestracji" ) {
+        let alert = UIAlertController(
+            title: "Błąd!",
+            message: error ,
+            preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ponów", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
@@ -279,6 +305,7 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     
     private func wybierzZdjZGalerii() {
         let vc = UIImagePickerController()
+        //        vc.modalPresentationStyle = .overCurrentContext
         vc.sourceType = .photoLibrary
         vc.delegate = self
         vc.allowsEditing = true
@@ -290,6 +317,11 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
             return
         }
         self.logoImageView.image = selectedImage
+        self.logoImageView.layer.borderWidth = 5
+        self.logoImageView.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
+        self.logoImageView.layer.cornerRadius = 90
+        
+        picker.dismiss(animated: true, completion: nil)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

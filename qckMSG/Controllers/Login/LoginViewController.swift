@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FBSDKLoginKit
 
 class LoginViewController: UIViewController {
     
@@ -66,6 +68,12 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let fbLoginButton: FBLoginButton = {
+        let button = FBLoginButton()
+        button.permissions = ["public_profile", "email"]
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .blue
@@ -77,12 +85,14 @@ class LoginViewController: UIViewController {
         
         emailField.delegate = self
         password.delegate = self
+        fbLoginButton.delegate = self
         
         view.addSubview(scrollView)
         scrollView.addSubview(logoImageView)
         scrollView.addSubview(emailField)
         scrollView.addSubview(password)
         scrollView.addSubview(loginButton)
+        scrollView.addSubview(fbLoginButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -131,6 +141,15 @@ class LoginViewController: UIViewController {
             loginButton.widthAnchor.constraint(equalToConstant: view.width - 60),
             loginButton.heightAnchor.constraint(equalToConstant: 52),
         ])
+        
+        fbLoginButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            fbLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            fbLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15),
+            fbLoginButton.widthAnchor.constraint(equalToConstant: view.width - 60),
+            fbLoginButton.heightAnchor.constraint(equalToConstant: 52),
+        ])
+        
     }
     
     @objc private func tryToSignIn() {
@@ -143,6 +162,19 @@ class LoginViewController: UIViewController {
             return
         }
         
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: pswd) { [weak self] (authResult, error) in
+            guard let self = self else {
+                return
+            }
+            guard let result = authResult, error == nil else {
+                print("Nie udało się zalogować adresem email \(email)")
+                return
+            }
+            let uzytkownik = result.user
+            print("Zalogowano użytkownika \(uzytkownik)")
+            self.dismiss(animated: true, completion: nil)
+        }
+                
     }
     
     private func alertSignInError() {
@@ -170,5 +202,65 @@ extension LoginViewController: UITextFieldDelegate {
         }
         
         return true
+    }
+}
+
+extension LoginViewController: LoginButtonDelegate {
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+        
+    }
+    
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        guard let token = result?.token?.tokenString else {
+            print("Nie udało sie zalogować kontem FB")
+            return
+        }
+        
+        let fbZapytanie = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email,name"], tokenString: token, version: nil, httpMethod: .get)
+        
+        fbZapytanie.start { (_, result, error) in
+            guard let result = result as? [String: Any],
+                  error == nil else {
+                print(error)
+                return
+            }
+            
+            guard let daneUzytkownika = result["name"] as? String,
+                  let adresEmail = result["email"] as? String else {
+                return
+            }
+            
+            let imieOrazNazwisko = daneUzytkownika.components(separatedBy: " ")
+            guard imieOrazNazwisko.count == 2 else {
+                return
+            }
+            
+            let imieUzytkownika = imieOrazNazwisko[0]
+            let nazwiskoUzytkownika = imieOrazNazwisko[1]
+            
+            DatabaseService.shared.czyUzytkownikIstnieje(with: adresEmail) { istnieje in
+                if !istnieje {
+                    DatabaseService.shared.utworzUzytkownika(with: ObiektUzytkownika(imie: imieUzytkownika,
+                                                                                     nazwisko: nazwiskoUzytkownika,
+                                                                                     adresEmail: adresEmail))
+                }
+            }
+            
+            let daneLogowania = FacebookAuthProvider.credential(withAccessToken: token)
+            FirebaseAuth.Auth.auth().signIn(with: daneLogowania) { [weak self] (authResult, error) in
+                
+                guard let self = self else {
+                    return
+                }
+                guard authResult != nil, error == nil else {
+                    print("Nie udało się zalogować kontem FB, uwierzytelnianie dwuskładnikowe może być wymagane! Error: \(error!)")
+                    return
+                }
+                
+                print("Udało się zalogować kontem FB")
+                self.navigationController?.dismiss(animated: true, completion: nil)
+            }
+        }
     }
 }

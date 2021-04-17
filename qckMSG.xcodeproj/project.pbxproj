@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,9 +18,16 @@
 		BC04CA65262880B500437BCE /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC04CA64262880B500437BCE /* NewConversationViewController.swift */; };
 		BC04CA68262880C000437BCE /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC04CA67262880C000437BCE /* ProfileViewController.swift */; };
 		BC04CA6E26288B6300437BCE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC04CA6D26288B6300437BCE /* Extensions.swift */; };
+		BC5D3197262987BB00A7458D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC5D3196262987BB00A7458D /* GoogleService-Info.plist */; };
+		BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D3199262997B400A7458D /* DatabaseService.swift */; };
+		BC5D31A82629BFAB00A7458D /* MainScreenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */; };
+		D2365199D57FA726060A6A2C /* Pods_qckMSG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BDB98C85C4653AB55230FA3 /* Pods_qckMSG.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03553591D175C620392020D5 /* Pods-qckMSG.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-qckMSG.debug.xcconfig"; path = "Target Support Files/Pods-qckMSG/Pods-qckMSG.debug.xcconfig"; sourceTree = "<group>"; };
+		4BA944DC63F39BE11396183D /* Pods-qckMSG.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-qckMSG.release.xcconfig"; path = "Target Support Files/Pods-qckMSG/Pods-qckMSG.release.xcconfig"; sourceTree = "<group>"; };
+		9BDB98C85C4653AB55230FA3 /* Pods_qckMSG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_qckMSG.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC04CA3B26287C5C00437BCE /* qckMSG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = qckMSG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC04CA3E26287C5C00437BCE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC04CA4026287C5C00437BCE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -34,6 +41,9 @@
 		BC04CA64262880B500437BCE /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		BC04CA67262880C000437BCE /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		BC04CA6D26288B6300437BCE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		BC5D3196262987BB00A7458D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC5D3199262997B400A7458D /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+		BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,17 +51,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2365199D57FA726060A6A2C /* Pods_qckMSG.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8DEE3D7DFC9AC96C6513B33C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9BDB98C85C4653AB55230FA3 /* Pods_qckMSG.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A05EE7EC71A8E963B71917DA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				03553591D175C620392020D5 /* Pods-qckMSG.debug.xcconfig */,
+				4BA944DC63F39BE11396183D /* Pods-qckMSG.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BC04CA3226287C5C00437BCE = {
 			isa = PBXGroup;
 			children = (
 				BC04CA3D26287C5C00437BCE /* qckMSG */,
 				BC04CA3C26287C5C00437BCE /* Products */,
+				A05EE7EC71A8E963B71917DA /* Pods */,
+				8DEE3D7DFC9AC96C6513B33C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,6 +96,7 @@
 		BC04CA3D26287C5C00437BCE /* qckMSG */ = {
 			isa = PBXGroup;
 			children = (
+				BC5D3196262987BB00A7458D /* GoogleService-Info.plist */,
 				BC04CA5726287DCE00437BCE /* Resources */,
 				BC04CA5626287DB200437BCE /* ViewModels */,
 				BC04CA5526287DAB00437BCE /* Models */,
@@ -79,12 +110,13 @@
 		BC04CA5326287D9200437BCE /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				BC04CA4226287C5C00437BCE /* ConversationsViewController.swift */,
 				BC04CA6A262881A600437BCE /* Login */,
 				BC04CA5E2628808D00437BCE /* PhotoViewerViewController.swift */,
 				BC04CA612628809600437BCE /* VideoPlayerViewController.swift */,
+				BC04CA4226287C5C00437BCE /* ConversationsViewController.swift */,
 				BC04CA64262880B500437BCE /* NewConversationViewController.swift */,
 				BC04CA67262880C000437BCE /* ProfileViewController.swift */,
+				BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -117,6 +149,7 @@
 				BC04CA3E26287C5C00437BCE /* AppDelegate.swift */,
 				BC04CA4026287C5C00437BCE /* SceneDelegate.swift */,
 				BC04CA6D26288B6300437BCE /* Extensions.swift */,
+				BC5D3199262997B400A7458D /* DatabaseService.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -137,9 +170,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BC04CA4F26287C5F00437BCE /* Build configuration list for PBXNativeTarget "qckMSG" */;
 			buildPhases = (
+				6E7E7EFEB84A9ADF61C6AC9A /* [CP] Check Pods Manifest.lock */,
 				BC04CA3726287C5C00437BCE /* Sources */,
 				BC04CA3826287C5C00437BCE /* Frameworks */,
 				BC04CA3926287C5C00437BCE /* Resources */,
+				535378164FF42F7642B60081 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -188,10 +223,53 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC04CA4826287C5F00437BCE /* Assets.xcassets in Resources */,
+				BC5D3197262987BB00A7458D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		535378164FF42F7642B60081 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-qckMSG/Pods-qckMSG-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-qckMSG/Pods-qckMSG-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-qckMSG/Pods-qckMSG-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6E7E7EFEB84A9ADF61C6AC9A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-qckMSG-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BC04CA3726287C5C00437BCE /* Sources */ = {
@@ -203,11 +281,13 @@
 				BC04CA65262880B500437BCE /* NewConversationViewController.swift in Sources */,
 				BC04CA4326287C5C00437BCE /* ConversationsViewController.swift in Sources */,
 				BC04CA622628809600437BCE /* VideoPlayerViewController.swift in Sources */,
+				BC5D31A82629BFAB00A7458D /* MainScreenVC.swift in Sources */,
 				BC04CA6E26288B6300437BCE /* Extensions.swift in Sources */,
 				BC04CA3F26287C5C00437BCE /* AppDelegate.swift in Sources */,
 				BC04CA68262880C000437BCE /* ProfileViewController.swift in Sources */,
 				BC04CA4126287C5C00437BCE /* SceneDelegate.swift in Sources */,
 				BC04CA5F2628808D00437BCE /* PhotoViewerViewController.swift in Sources */,
+				BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +412,7 @@
 		};
 		BC04CA5026287C5F00437BCE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 03553591D175C620392020D5 /* Pods-qckMSG.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -351,6 +432,7 @@
 		};
 		BC04CA5126287C5F00437BCE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BA944DC63F39BE11396183D /* Pods-qckMSG.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

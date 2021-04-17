@@ -6,24 +6,79 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileViewController: UIViewController {
-
+    
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: "komorka")
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.frame = view.bounds
+        return tableView
+    }()
+    
+    let data = ["Wyloguj się"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Profil"
+        view.addSubview(tableView)
     }
     
+}
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
     }
-    */
-
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "komorka", for: indexPath)
+        cell.textLabel?.text = data[indexPath.row]
+        cell.textLabel?.textAlignment = .center
+        cell.textLabel?.textColor = .red
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let alertWindow = UIAlertController(
+            title: "",
+            message: "",
+            preferredStyle: .actionSheet)
+        alertWindow.addAction(UIAlertAction(
+                                title: "Wyloguj",
+                                style: .destructive,
+                                handler: { [weak self] _ in
+                                    
+                                    guard let self = self else {
+                                        return
+                                    }
+                                    
+                                    do {
+                                        try FirebaseAuth.Auth.auth().signOut()
+                                        
+                                        //karta logowania
+                                        let vc = LoginViewController()
+                                        let nav = UINavigationController(rootViewController: vc)
+                                        nav.hidesBarsOnSwipe = true
+                                        nav.modalPresentationStyle = .fullScreen
+                                        self.present(nav, animated: true)
+                                    }
+                                    catch {
+                                        print("Nie udało się wylogować")
+                                    }
+                                }))
+        alertWindow.addAction(UIAlertAction(title: "Anuluj", style: .cancel, handler: nil))
+        present(alertWindow, animated: true)
+        
+    }
+    
+    
 }

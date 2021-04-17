@@ -6,20 +6,23 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ConversationsViewController: UIViewController {
-
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
+        title = "Wiadomości"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        let isLoggedIn = UserDefaults.standard.bool(forKey: "logged_in")
-        
-        if !isLoggedIn {
+        uwierzytelnianieUzytkownika()
+    }
+    
+    private func uwierzytelnianieUzytkownika() {
+        if FirebaseAuth.Auth.auth().currentUser == nil {
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.hidesBarsOnSwipe = true
@@ -27,7 +30,7 @@ class ConversationsViewController: UIViewController {
             present(nav, animated: true)
         }
     }
-
-
+    
+    
 }
 
