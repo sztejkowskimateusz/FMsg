@@ -42,7 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        
         guard error == nil else {
+            print("error")
             return
         }
         
@@ -53,12 +55,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
         
         guard let uzytkownik = user else {
+            print("err")
             return
         }
         
-        print("Zalogowano dla \(uzytkownik )")
         
-        DatabaseService.shared.czyUzytkownikIstnieje(with: adresEmail) { istnieje in
+        DatabaseService.shared.czyUzytkownikIstnieje(with: uzytkownik.profile.email) { istnieje in
             if !istnieje {
                 DatabaseService.shared.utworzUzytkownika(with: ObiektUzytkownika(imie: imieUzytkownika,
                                                                                  nazwisko: nazwiskoUzytkownika,
@@ -67,8 +69,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
         
         guard let authentication = user.authentication else {
+            print("error")
             return
         }
+        
+        print("debug")
         let daneLogowania = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                           accessToken: authentication.accessToken)
         

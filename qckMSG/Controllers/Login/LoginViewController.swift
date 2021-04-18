@@ -86,11 +86,12 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(forName: .zalogowanoPowiadomienie,
                                                object: nil,
                                                queue: .main) { [weak self] _ in
-            guard let self = self else {
+            guard let strongSelf = self else {
+                print("error zalogowano powiadomienie")
                 return
             }
             
-            self.navigationController?.dismiss(animated: true, completion: nil)
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Rejestracja", style: .done, target: self, action: #selector(didTapRegister))
