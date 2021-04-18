@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     
@@ -74,12 +75,27 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let googleLogInBtn = GIDSignInButton()
+    
+    private var obserwatorLogowania: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .blue
         title = "Logowanie"
+        NotificationCenter.default.addObserver(forName: .zalogowanoPowiadomienie,
+                                               object: nil,
+                                               queue: .main) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            
+            self.navigationController?.dismiss(animated: true, completion: nil)
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Rejestracja", style: .done, target: self, action: #selector(didTapRegister))
+        
+        GIDSignIn.sharedInstance()?.presentingViewController = self
         
         loginButton.addTarget(self, action: #selector(tryToSignIn), for: .touchUpInside)
         
@@ -93,6 +109,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(password)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(fbLoginButton)
+        scrollView.addSubview(googleLogInBtn)
     }
     
     override func viewDidLayoutSubviews() {
@@ -145,11 +162,25 @@ class LoginViewController: UIViewController {
         fbLoginButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             fbLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            fbLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15),
+            fbLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 25),
             fbLoginButton.widthAnchor.constraint(equalToConstant: view.width - 60),
             fbLoginButton.heightAnchor.constraint(equalToConstant: 52),
         ])
         
+        googleLogInBtn.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            googleLogInBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            googleLogInBtn.topAnchor.constraint(equalTo: fbLoginButton.bottomAnchor, constant: 15),
+            googleLogInBtn.widthAnchor.constraint(equalToConstant: view.width - 60),
+            googleLogInBtn.heightAnchor.constraint(equalToConstant: 52),
+        ])
+        
+    }
+    
+    deinit {
+        if let obserwator = obserwatorLogowania {
+            NotificationCenter.default.removeObserver(obserwator)
+        }
     }
     
     @objc private func tryToSignIn() {
@@ -174,7 +205,7 @@ class LoginViewController: UIViewController {
             print("Zalogowano użytkownika \(uzytkownik)")
             self.dismiss(animated: true, completion: nil)
         }
-                
+        
     }
     
     private func alertSignInError() {
