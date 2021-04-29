@@ -9,8 +9,11 @@ import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
 import GoogleSignIn
+import JGProgressHUD
 
 class LoginViewController: UIViewController {
+    
+    private let progressBar = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -97,6 +100,7 @@ class LoginViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Rejestracja", style: .done, target: self, action: #selector(didTapRegister))
         
         GIDSignIn.sharedInstance()?.presentingViewController = self
+        googleLogInBtn.style = .iconOnly
         
         loginButton.addTarget(self, action: #selector(tryToSignIn), for: .touchUpInside)
         
@@ -194,10 +198,17 @@ class LoginViewController: UIViewController {
             return
         }
         
+        progressBar.show(in: view)
+        
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: pswd) { [weak self] (authResult, error) in
             guard let self = self else {
                 return
             }
+            
+            DispatchQueue.main.async {
+                self.progressBar.dismiss() 
+            }
+            
             guard let result = authResult, error == nil else {
                 print("Nie udało się zalogować adresem email \(email)")
                 return

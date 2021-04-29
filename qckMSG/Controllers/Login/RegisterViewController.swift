@@ -7,8 +7,11 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
+    
+    private let progressBar = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -211,10 +214,16 @@ class RegisterViewController: UIViewController {
             return
         }
         
+        progressBar.show(in: view)
+        
         DatabaseService.shared.czyUzytkownikIstnieje(with: email) { [weak self] uzytkownikIstnieje in
               
             guard let self = self else {
                 return
+            }
+            
+            DispatchQueue.main.async {
+                self.progressBar.dismiss()
             }
             
             guard !uzytkownikIstnieje else {

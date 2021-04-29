@@ -21,6 +21,7 @@
 		BC5D3197262987BB00A7458D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC5D3196262987BB00A7458D /* GoogleService-Info.plist */; };
 		BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D3199262997B400A7458D /* DatabaseService.swift */; };
 		BC5D31A82629BFAB00A7458D /* MainScreenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */; };
+		BC86F286263AD4090059CA7B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC86F285263AD4090059CA7B /* ChatViewController.swift */; };
 		D2365199D57FA726060A6A2C /* Pods_qckMSG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BDB98C85C4653AB55230FA3 /* Pods_qckMSG.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 		BC5D3196262987BB00A7458D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC5D3199262997B400A7458D /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenVC.swift; sourceTree = "<group>"; };
+		BC86F285263AD4090059CA7B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 				BC04CA64262880B500437BCE /* NewConversationViewController.swift */,
 				BC04CA67262880C000437BCE /* ProfileViewController.swift */,
 				BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */,
+				BC86F285263AD4090059CA7B /* ChatViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				BC04CA6E26288B6300437BCE /* Extensions.swift in Sources */,
 				BC04CA3F26287C5C00437BCE /* AppDelegate.swift in Sources */,
 				BC04CA68262880C000437BCE /* ProfileViewController.swift in Sources */,
+				BC86F286263AD4090059CA7B /* ChatViewController.swift in Sources */,
 				BC04CA4126287C5C00437BCE /* SceneDelegate.swift in Sources */,
 				BC04CA5F2628808D00437BCE /* PhotoViewerViewController.swift in Sources */,
 				BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */,
