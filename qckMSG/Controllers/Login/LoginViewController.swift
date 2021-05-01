@@ -214,6 +214,9 @@ class LoginViewController: UIViewController {
                 return
             }
             let uzytkownik = result.user
+            
+            UserDefaults.standard.setValue(email, forKey: "email")
+            
             print("Zalogowano użytkownika \(uzytkownik)")
             self.dismiss(animated: true, completion: nil)
         }
