@@ -217,6 +217,7 @@ class LoginViewController: UIViewController {
             
             UserDefaults.standard.setValue(email, forKey: "email")
             
+            
             print("Zalogowano użytkownika \(uzytkownik)")
             self.dismiss(animated: true, completion: nil)
         }
@@ -284,6 +285,7 @@ extension LoginViewController: LoginButtonDelegate {
                     return
                 }
             
+            UserDefaults.standard.setValue(adresEmail, forKey: "email")
             
             DatabaseService.shared.czyUzytkownikIstnieje(with: adresEmail) { istnieje in
                 if !istnieje {
