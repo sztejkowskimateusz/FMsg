@@ -33,11 +33,17 @@ extension DatabaseService {
     }
     
     /// Tworzy obiekt nowego uzytkownika w bazie danych
-    public func utworzUzytkownika(with uzytkownik: ObiektUzytkownika) {
+    public func utworzUzytkownika(with uzytkownik: ObiektUzytkownika, completion: @escaping (Bool) -> () ) {
         database.child(uzytkownik.idUzytkownika).setValue([
             "imie": uzytkownik.imie,
             "nazwisko": uzytkownik.nazwisko
-        ])
+        ]) { (error, databaseReference) in
+            guard error == nil else {
+                completion(false)
+                return
+            }
+            completion(true)
+        }
     }
 }
 
@@ -51,6 +57,9 @@ struct ObiektUzytkownika {
         id = id.replacingOccurrences(of: "@", with: "-")
         return id
     }
-    
-//    let zdjProfiloweURL: String
+
+    var zdjProfiloweFile: String {
+        return "\(idUzytkownika)_profile_picture.png"
+    }
+ 
 }

@@ -80,7 +80,7 @@ class RegisterViewController: UIViewController {
         return pole
     }()
     
-    private let logoImageView: UIImageView = {
+    private let profilePicture: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.crop.circle.fill.badge.questionmark")
         imageView.contentMode = .scaleAspectFit
@@ -111,11 +111,11 @@ class RegisterViewController: UIViewController {
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(ustawZdjProfilowe))
         gesture.numberOfTapsRequired = 1
-        logoImageView.addGestureRecognizer(gesture)
-        logoImageView.isUserInteractionEnabled = true;
+        profilePicture.addGestureRecognizer(gesture)
+        profilePicture.isUserInteractionEnabled = true;
         
         view.addSubview(scrollView)
-        scrollView.addSubview(logoImageView)
+        scrollView.addSubview(profilePicture)
         scrollView.addSubview(nazwiskoPole)
         scrollView.addSubview(imiePole)
         
@@ -140,19 +140,19 @@ class RegisterViewController: UIViewController {
         ])
         
         //logo
-        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        profilePicture.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
-            logoImageView.widthAnchor.constraint(equalToConstant: view.frame.size.width/2),
-            logoImageView.heightAnchor.constraint(equalToConstant: view.frame.size.width/2),
+            profilePicture.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            profilePicture.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
+            profilePicture.widthAnchor.constraint(equalToConstant: view.frame.size.width/2),
+            profilePicture.heightAnchor.constraint(equalToConstant: view.frame.size.width/2),
         ])
         
         //imie
         imiePole.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             imiePole.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imiePole.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 35),
+            imiePole.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 35),
             imiePole.widthAnchor.constraint(equalToConstant: view.width - 60),
             imiePole.heightAnchor.constraint(equalToConstant: 52),
         ])
@@ -237,10 +237,31 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 
-                DatabaseService.shared.utworzUzytkownika(with: ObiektUzytkownika(
-                                                            imie: imie,
-                                                            nazwisko: nazwisko,
-                                                            adresEmail: email))
+                let uzytkownik = ObiektUzytkownika(
+                    imie: imie,
+                    nazwisko: nazwisko,
+                    adresEmail: email)
+                
+                DatabaseService.shared.utworzUzytkownika(with: uzytkownik) { (success) in
+                    if success {
+                        //upload img
+                        guard let image = self.profilePicture.image,
+                              let data = image.pngData() else {
+                            return
+                        }
+                        
+                        let file = uzytkownik.zdjProfiloweFile
+                        StorageService.instance.uploadAvatar(data: data, fileName: file) { (result) in
+                            switch result {
+                            case .success(let downloadURL):
+                                UserDefaults.standard.set(downloadURL, forKey: "profile_picture_url")
+                                print(downloadURL)
+                            case .failure(let error):
+                                print(error)
+                            }
+                        }
+                    }
+                }
                 
                 self.dismiss(animated: true, completion: nil)
             }
@@ -325,10 +346,10 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
             return
         }
-        self.logoImageView.image = selectedImage
-        self.logoImageView.layer.borderWidth = 5
-        self.logoImageView.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
-        self.logoImageView.layer.cornerRadius = 90
+        self.profilePicture.image = selectedImage
+        self.profilePicture.layer.borderWidth = 5
+        self.profilePicture.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
+        self.profilePicture.layer.cornerRadius = 90
         
         picker.dismiss(animated: true, completion: nil)
     }

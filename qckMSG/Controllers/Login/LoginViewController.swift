@@ -260,7 +260,10 @@ extension LoginViewController: LoginButtonDelegate {
             return
         }
         
-        let fbZapytanie = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email,name"], tokenString: token, version: nil, httpMethod: .get)
+        let fbZapytanie = FBSDKLoginKit.GraphRequest(graphPath: "me",
+                                                     parameters: ["fields": "email, first_name, last_name, picture.type(large)"], tokenString: token,
+                                                     version: nil,
+                                                     httpMethod: .get)
         
         fbZapytanie.start { (_, result, error) in
             guard let result = result as? [String: Any],
@@ -269,24 +272,44 @@ extension LoginViewController: LoginButtonDelegate {
                 return
             }
             
-            guard let daneUzytkownika = result["name"] as? String,
-                  let adresEmail = result["email"] as? String else {
-                return
-            }
+            guard let imieUzytkownika = result["first_name"] as? String,
+                  let nazwiskoUzytkownika = result["last_name"] as? String,
+                  let adresEmail = result["email"] as? String,
+                  let picture = result["picture"] as? [String: Any],
+                  let data = picture["data"] as? [String: Any],
+                  let pictureUrl = data["url"] as? String else {
+                    return
+                }
             
-            let imieOrazNazwisko = daneUzytkownika.components(separatedBy: " ")
-            guard imieOrazNazwisko.count == 2 else {
-                return
-            }
-            
-            let imieUzytkownika = imieOrazNazwisko[0]
-            let nazwiskoUzytkownika = imieOrazNazwisko[1]
             
             DatabaseService.shared.czyUzytkownikIstnieje(with: adresEmail) { istnieje in
                 if !istnieje {
-                    DatabaseService.shared.utworzUzytkownika(with: ObiektUzytkownika(imie: imieUzytkownika,
-                                                                                     nazwisko: nazwiskoUzytkownika,
-                                                                                     adresEmail: adresEmail))
+                    let uzytkownik = ObiektUzytkownika(imie: imieUzytkownika,
+                                                       nazwisko: nazwiskoUzytkownika,
+                                                       adresEmail: adresEmail)
+                    DatabaseService.shared.utworzUzytkownika(with: uzytkownik) { (success) in
+                        if success {
+                            guard let url = URL(string: pictureUrl) else { return }
+                            
+                            URLSession.shared.dataTask(with: url) { (data, _, error) in
+                                guard let data = data, error == nil else {
+                                    print("failed to get picture from fb")
+                                    return
+                                }
+                                
+                                let file = uzytkownik.zdjProfiloweFile
+                                StorageService.instance.uploadAvatar(data: data, fileName: file) { (result) in
+                                    switch result {
+                                    case .success(let downloadURL):
+                                        UserDefaults.standard.set(downloadURL, forKey: "profile_picture_url")
+                                        print(downloadURL)
+                                    case .failure(let error):
+                                        print(error)
+                                    }
+                                }
+                            }.resume()
+                        }
+                    }
                 }
             }
             

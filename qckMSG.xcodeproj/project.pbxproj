@@ -22,6 +22,7 @@
 		BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D3199262997B400A7458D /* DatabaseService.swift */; };
 		BC5D31A82629BFAB00A7458D /* MainScreenVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */; };
 		BC86F286263AD4090059CA7B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC86F285263AD4090059CA7B /* ChatViewController.swift */; };
+		BC86F2A5263C28800059CA7B /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC86F2A4263C28800059CA7B /* StorageService.swift */; };
 		D2365199D57FA726060A6A2C /* Pods_qckMSG.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BDB98C85C4653AB55230FA3 /* Pods_qckMSG.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +47,7 @@
 		BC5D3199262997B400A7458D /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		BC5D31A72629BFAB00A7458D /* MainScreenVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenVC.swift; sourceTree = "<group>"; };
 		BC86F285263AD4090059CA7B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		BC86F2A4263C28800059CA7B /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 				BC04CA4026287C5C00437BCE /* SceneDelegate.swift */,
 				BC04CA6D26288B6300437BCE /* Extensions.swift */,
 				BC5D3199262997B400A7458D /* DatabaseService.swift */,
+				BC86F2A4263C28800059CA7B /* StorageService.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				BC04CA4126287C5C00437BCE /* SceneDelegate.swift in Sources */,
 				BC04CA5F2628808D00437BCE /* PhotoViewerViewController.swift in Sources */,
 				BC5D319A262997B400A7458D /* DatabaseService.swift in Sources */,
+				BC86F2A5263C28800059CA7B /* StorageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
