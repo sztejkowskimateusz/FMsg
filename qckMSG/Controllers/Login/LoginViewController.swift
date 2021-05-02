@@ -217,7 +217,6 @@ class LoginViewController: UIViewController {
             
             UserDefaults.standard.setValue(email, forKey: "email")
             
-            
             print("Zalogowano użytkownika \(uzytkownik)")
             self.dismiss(animated: true, completion: nil)
         }

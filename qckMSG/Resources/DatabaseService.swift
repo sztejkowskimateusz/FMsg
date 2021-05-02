@@ -13,6 +13,11 @@ final class DatabaseService {
     static let shared = DatabaseService()
     private let database = Database.database().reference()
     
+    static func safeID(email: String) -> String {
+        var id = email.replacingOccurrences(of: ".", with: "-")
+        id = id.replacingOccurrences(of: "@", with: "-")
+        return id
+    }
 }
 
 //MARK: - Zarządzanie kontem w bazie danych
@@ -42,9 +47,56 @@ extension DatabaseService {
                 completion(false)
                 return
             }
-            completion(true)
+            
+            self.database.child("users").observeSingleEvent(of: .value) { (snapshot) in
+                if var usersCollection = snapshot.value as? [[String: String]] {
+                    let newUser = [
+                        "name": uzytkownik.imie + " " + uzytkownik.nazwisko,
+                        "email": uzytkownik.idUzytkownika
+                    ]
+                    usersCollection.append(newUser)
+                    
+                    self.database.child("users").setValue(usersCollection) { (error, _) in
+                        guard error == nil else {
+                            completion(false)
+                            return
+                        }
+                        completion(true)
+                    }
+                    
+                } else {
+                    let newUsersCollection: [[String: String]] = [
+                        [
+                            "name": uzytkownik.imie + " " + uzytkownik.nazwisko,
+                            "email": uzytkownik.idUzytkownika
+                        ]
+                    ]
+                    self.database.child("users").setValue(newUsersCollection) { (error, _) in
+                        guard error == nil else {
+                            completion(false)
+                            return
+                        }
+                        completion(true)
+                    }
+                }
+            }
         }
     }
+    
+    public func fetchAllUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void) {
+        database.child("users").observeSingleEvent(of: .value) { (snapshot) in
+            guard let value = snapshot.value as? [[String: String]] else {
+                completion(.failure(DatabaseServiceError.failedToFetch))
+                return
+            }
+            
+            completion(.success(value))
+        }
+    }
+}
+
+public enum DatabaseServiceError: Error {
+    case failedToFetch
 }
 
 struct ObiektUzytkownika {
