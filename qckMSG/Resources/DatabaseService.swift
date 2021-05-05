@@ -99,6 +99,180 @@ public enum DatabaseServiceError: Error {
     case failedToFetch
 }
 
+
+// MARK: - wysyłanie wiadomości oraz konwersacje
+
+extension DatabaseService {
+    
+    /// Tworzy owy czat z wybraną osobą z wysłaniem wiadomości
+    public func createNewChat(with emailOfUserToChatWith: String, msg: Message, completion: @escaping (Bool) -> ()) {
+        guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String else { return }
+        let currentUserSafeEmail = DatabaseService.safeID(email: currentUserEmail)
+        
+        let reference = database.child("\(currentUserSafeEmail)")
+        reference.observeSingleEvent(of: .value) { snapshot in
+            guard var userNode = snapshot.value as? [String: Any] else {
+                completion(false)
+                print("err no user")
+                return
+            }
+            
+            var msgToBeSent = ""
+            
+            switch msg.kind {
+            case .text(let msgContent):
+                msgToBeSent = msgContent
+            case .attributedText(_):
+                break
+            case .photo(_):
+                break
+            case .video(_):
+                break
+            case .location(_):
+                break
+            case .emoji(_):
+                break
+            case .audio(_):
+                break
+            case .contact(_):
+                break
+            case .linkPreview(_):
+                break
+            case .custom(_):
+                break
+            }
+            
+            let msgDate = msg.sentDate
+            let dateToString = ChatViewController.dateFormat.string(from: msgDate)
+            
+            let chatId = "conversation_\(msg.messageId)"
+            
+            let newChatData: [String: Any] = [
+                "id": chatId,
+                "other_user_email": emailOfUserToChatWith,
+                "latest_message": [
+                    "date": dateToString,
+                    "message": msgToBeSent,
+                    "is_read": false
+                ]
+            ]
+            
+            if var chats = userNode["conversations"] as? [[String: Any]] {
+                // obiekt czat juz istnieje dla zadanego uzytkownika
+                
+                chats.append(newChatData)
+                userNode["conversations"] = chats
+                
+                reference.setValue(userNode) { [weak self] (error, _) in
+                    guard error == nil else {
+                        completion(false)
+                        print("ta")
+                        return
+                    }
+                    print("no")
+                    self?.finishCreationOfChat(chatIdentifier: chatId,
+                                              firstMsg: msg,
+                                              completion: completion)
+                }
+            }
+            else {
+                // obiekt czatu nie istnieje utworz
+                userNode["conversations"] = [
+                    newChatData
+                ]
+                
+                reference.setValue(userNode) { [weak self] (error, _) in
+                    guard error == nil else {
+                        completion(false)
+                        return
+                    }
+                    self?.finishCreationOfChat(chatIdentifier: chatId,
+                                              firstMsg: msg,
+                                              completion: completion)
+                }
+            }
+        }
+    }
+    
+    private func finishCreationOfChat(chatIdentifier: String, firstMsg: Message, completion: @escaping (Bool) -> ()) {
+        
+        var msgToBeSent = ""
+        
+        switch firstMsg.kind {
+        case .text(let msgContent):
+            msgToBeSent = msgContent
+        case .attributedText(_):
+            break
+        case .photo(_):
+            break
+        case .video(_):
+            break
+        case .location(_):
+            break
+        case .emoji(_):
+            break
+        case .audio(_):
+            break
+        case .contact(_):
+            break
+        case .linkPreview(_):
+            break
+        case .custom(_):
+            break
+        }
+        
+        let msgDate = firstMsg.sentDate
+        let dateToString = ChatViewController.dateFormat.string(from: msgDate)
+        
+        guard let currUsrEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+            print("brrrr")
+            completion(false)
+            return
+        }
+        
+        let currUsrSafeEmail = DatabaseService.safeID(email: currUsrEmail)
+        
+        let messagesCollection: [String: Any] = [
+            "id": firstMsg.messageId,
+            "type": firstMsg.kind.msgKindString,
+            "content": msgToBeSent,
+            "date": dateToString,
+            "sender_email": currUsrSafeEmail,
+            "is_read": false
+        ]
+        
+        let value: [String: Any] = [
+            "messages": [
+                messagesCollection
+            ]
+        ]
+        
+        database.child("\(chatIdentifier)").setValue(value) { (error, _) in
+            guard error == nil else {
+                completion(false)
+                return
+            }
+            completion(true)
+        }
+    }
+    
+    /// Pobiera wszysztkie konwersacje dla wybranego użytkownika
+    public func fetchAllConversations(for email: String, completion: @escaping (Result<String, Error>) -> ()) {
+        
+    }
+    
+    /// Pobiera wszystkie wiadomości dla wybranego czatu
+    public func fetchAllMsgsForSpecificChat(with id: String, completion: @escaping (Result<String, Error>) -> ()) {
+        
+    }
+    
+    /// Wysyła wiadomość w wybranym czacie
+    public func sendNewMsg(to chat: String, message: Message) {
+        
+    }
+    
+}
+
 struct ObiektUzytkownika {
     let imie: String
     let nazwisko: String

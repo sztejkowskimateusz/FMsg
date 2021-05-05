@@ -9,6 +9,8 @@ import UIKit
 import JGProgressHUD
 
 class NewConversationViewController: UIViewController {
+    
+    public var choosenChatCompletion: (([String: String]) -> (Void))?
                     
     private let progressBar = JGProgressHUD(style: .dark)
     
@@ -92,6 +94,12 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let wybranyCzat = filterResults[indexPath.row]
+        
+        dismiss(animated: true) { [weak self] in
+            self?.choosenChatCompletion?(wybranyCzat)
+        }
     }
 }
 

@@ -54,8 +54,28 @@ class ConversationsViewController: UIViewController {
     }
     
     @objc func composeActivated() {
-        let vcNewChat = UINavigationController(rootViewController: NewConversationViewController())
-        present(vcNewChat, animated: true, completion: nil)
+        
+        let newChatVC = NewConversationViewController()
+        newChatVC.choosenChatCompletion = { [weak self] result in
+            self?.createNewChat(choosenUser: result)
+        }
+        
+        let navVC = UINavigationController(rootViewController: newChatVC)
+        present(navVC, animated: true, completion: nil)
+    }
+    
+    private func createNewChat(choosenUser: [String: String]) {
+        
+        guard let nameOfPersonToStartChatWith = choosenUser["name"],
+              let email = choosenUser["email"] else {
+            return
+        }
+        
+        let chatVC = ChatViewController(with: email)
+        chatVC.isEmptyConversation = true
+        chatVC.navigationItem.largeTitleDisplayMode = .never
+        chatVC.title = nameOfPersonToStartChatWith
+        navigationController?.pushViewController(chatVC, animated: true)
     }
     
     private func configureTable() {
@@ -102,7 +122,7 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let chatVC = ChatViewController()
+        let chatVC = ChatViewController(with: "szteja@gmail.com")
         chatVC.navigationItem.largeTitleDisplayMode = .never
         chatVC.title = "Nikos Pietrzak"
         navigationController?.pushViewController(chatVC, animated: true)
