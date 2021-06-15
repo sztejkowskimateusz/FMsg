@@ -15,10 +15,10 @@
 - [x] Pobranie odpowiednich danych z używanego konta firmy zewnętrznej tj. avatar facebookowy etc. **22.04.2021**
 - [x] Rejestracja oraz logowanie za pomocą nowo utworzonego konta **15.04.2021**
 - [x] Obsługa listy użytkowników/znajomych **22.04.2021**
-- [ ] Mechanizm wysyłania oraz odbierania wiadomości tekstowych **13.05.2021**
-- [ ] Przechowywanie wiadomości w bazie danych **27.05.2021**
+- [X] Mechanizm wysyłania oraz odbierania wiadomości tekstowych **13.05.2021**
+- [X] Przechowywanie wiadomości w bazie danych **27.05.2021**
 - [ ] Push Notifications o otrzymanych wiadomościach **27.05.2021**
 - [ ] Uwierzytelnianie użytkownika za pomocą danych biometrycznych TouchID/FaceID **10.06.2021**
-- [ ] Obsługa wiadomości wideo oraz możliwość wysyłania zdjęć **03.06.2021**
-- [ ] Testy jednostkowe **17.06.2021**
+- [X] Obsługa wiadomości wideo oraz możliwość wysyłania zdjęć **03.06.2021**
+- [X] Testy jednostkowe **17.06.2021**
 - [ ] Wersja finalna aplikacji **17.06.2021**
