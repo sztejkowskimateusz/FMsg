@@ -63,6 +63,8 @@
 	<string>Zezwól na zrobienie zdjęcia profilowego</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Udziel dostępu do galerii zdjęć w celu wybrania zdjęcia profilowego</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Zezwól na dostęp do mikrofonu</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

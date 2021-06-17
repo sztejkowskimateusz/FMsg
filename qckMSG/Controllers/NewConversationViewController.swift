@@ -10,13 +10,13 @@ import JGProgressHUD
 
 class NewConversationViewController: UIViewController {
     
-    public var choosenChatCompletion: (([String: String]) -> (Void))?
+    public var choosenChatCompletion: ((WynikWyszukiwania) -> (Void))?
                     
     private let progressBar = JGProgressHUD(style: .dark)
     
     private var users = [[String: String]]()
     private var alreadyFetched = false
-    private var filterResults = [[String: String]]()
+    private var filterResults = [WynikWyszukiwania]()
     
 
     private let search: UISearchBar = {
@@ -28,7 +28,7 @@ class NewConversationViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView()
         table.isHidden = true
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.register(NewChatCell.self, forCellReuseIdentifier: NewChatCell.cellIdentifier)
         return table
     }()
     
@@ -87,8 +87,9 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = filterResults[indexPath.row]["name"]
+        let model = filterResults[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewChatCell.cellIdentifier, for: indexPath) as! NewChatCell
+        cell.configureCell(with: model)
         return cell
     }
     
@@ -100,6 +101,10 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
         dismiss(animated: true) { [weak self] in
             self?.choosenChatCompletion?(wybranyCzat)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 90
     }
 }
 
@@ -135,17 +140,32 @@ extension NewConversationViewController: UISearchBarDelegate {
     }
     
     func filterCollection(filter: String) {
-        guard alreadyFetched else {
+        guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String,
+              alreadyFetched else {
             return
         }
         
+        let currentUserSafeEmail = DatabaseService.safeID(email: currentUserEmail)
+        
         self.progressBar.dismiss()
-        let results: [[String: String]] = self.users.filter({
+        let results: [WynikWyszukiwania] = self.users.filter({
+            guard let email = $0["email"],
+                  email != currentUserSafeEmail else {
+                return false
+            }
             guard let name = $0["name"]?.lowercased() else {
                 return false
             }
             
             return name.hasPrefix(filter.lowercased())
+        }).compactMap({
+            
+            guard let email = $0["email"],
+                  let name = $0["name"] else {
+                return nil
+            }
+            
+            return WynikWyszukiwania(name: name, email: email)
         })
         
         self.filterResults = results
@@ -163,4 +183,9 @@ extension NewConversationViewController: UISearchBarDelegate {
         }
     }
     
+}
+
+struct WynikWyszukiwania {
+    let name: String
+    let email: String
 }

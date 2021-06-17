@@ -24,13 +24,15 @@ class RegisterViewController: UIViewController {
         pole.autocapitalizationType = .none
         pole.autocorrectionType = .no
         pole.returnKeyType = .continue
-        pole.layer.cornerRadius = 12
+        pole.layer.cornerRadius = 20
         pole.layer.borderWidth = 1
         pole.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
         pole.placeholder = "Adres e-mail "
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "envelope.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
@@ -39,13 +41,15 @@ class RegisterViewController: UIViewController {
         pole.autocapitalizationType = .none
         pole.autocorrectionType = .no
         pole.returnKeyType = .continue
-        pole.layer.cornerRadius = 12
+        pole.layer.cornerRadius = 20
         pole.layer.borderWidth = 1
         pole.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
         pole.placeholder = "Imię"
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "person.crop.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
@@ -54,13 +58,15 @@ class RegisterViewController: UIViewController {
         pole.autocapitalizationType = .none
         pole.autocorrectionType = .no
         pole.returnKeyType = .continue
-        pole.layer.cornerRadius = 12
+        pole.layer.cornerRadius = 20
         pole.layer.borderWidth = 1
         pole.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
         pole.placeholder = "Nazwisko"
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "person.crop.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
@@ -69,20 +75,23 @@ class RegisterViewController: UIViewController {
         pole.autocapitalizationType = .none
         pole.autocorrectionType = .no
         pole.returnKeyType = .continue
-        pole.layer.cornerRadius = 12
+        pole.layer.cornerRadius = 20
         pole.layer.borderWidth = 1
         pole.layer.borderColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5).cgColor
         pole.placeholder = "Hasło"
         pole.isSecureTextEntry = true
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "lock.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
     private let profilePicture: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.crop.circle.fill.badge.questionmark")
+        imageView.tintColor = .systemYellow
         imageView.contentMode = .scaleAspectFit
         imageView.layer.masksToBounds = true
         return imageView
@@ -91,23 +100,27 @@ class RegisterViewController: UIViewController {
     private let registerButton: UIButton = {
         let button = UIButton()
         button.setTitle("Zarejestruj", for: .normal)
-        button.backgroundColor = UIColor(red: 0.255, green: 0.249, blue: 0.55, alpha: 0.7)
+        button.backgroundColor = UIColor(red: 0.114, green: 0.110, blue: 0.141, alpha: 1.0)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 12
+        button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
+        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.systemYellow.cgColor
         button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .blue
+        view.backgroundColor = UIColor(red: 0.114, green: 0.110, blue: 0.141, alpha: 1.0)
         title = "Rejestracja"
         
         registerButton.addTarget(self, action: #selector(tryToRegister), for: .touchUpInside)
         
         emailField.delegate = self
         password.delegate = self
+        
+        navigationController?.navigationBar.isHidden = false
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(ustawZdjProfilowe))
         gesture.numberOfTapsRequired = 1

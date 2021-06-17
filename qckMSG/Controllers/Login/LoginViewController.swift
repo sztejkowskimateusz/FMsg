@@ -33,7 +33,9 @@ class LoginViewController: UIViewController {
         pole.placeholder = "Adres e-mail "
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "envelope.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
@@ -50,13 +52,16 @@ class LoginViewController: UIViewController {
         pole.isSecureTextEntry = true
         pole.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         pole.leftViewMode = .always
-        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.5)
+        pole.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.41, alpha: 0.4)
+        let img = UIImage(systemName: "lock.circle.fill")
+        pole.setIcon(image: img!)
         return pole
     }()
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "appIcon")
+        imageView.image = UIImage(systemName: "bolt.horizontal")
+        imageView.tintColor = .systemYellow
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -64,11 +69,27 @@ class LoginViewController: UIViewController {
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Zaloguj", for: .normal)
-        button.backgroundColor = UIColor(red: 0.255, green: 0.249, blue: 0.55, alpha: 0.7)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 12
+        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.systemYellow.cgColor
+        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.textColor = .white
+        button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        return button
+    }()
+    
+    private let registerButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Rejestracja", for: .normal)
+        button.layer.cornerRadius = 20
+        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.systemYellow.cgColor
+        button.backgroundColor = .systemYellow
+        button.titleLabel?.textAlignment = .center
+        button.titleLabel?.textColor = UIColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.4)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         return button
     }()
     
@@ -84,9 +105,9 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .blue
+        view.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.4)
         title = "Logowanie"
-        NotificationCenter.default.addObserver(forName: .zalogowanoPowiadomienie,
+        obserwatorLogowania = NotificationCenter.default.addObserver(forName: .zalogowanoPowiadomienie,
                                                object: nil,
                                                queue: .main) { [weak self] _ in
             guard let strongSelf = self else {
@@ -102,7 +123,10 @@ class LoginViewController: UIViewController {
         GIDSignIn.sharedInstance()?.presentingViewController = self
         googleLogInBtn.style = .iconOnly
         
+        navigationController?.navigationBar.isHidden = true
+        
         loginButton.addTarget(self, action: #selector(tryToSignIn), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
         
         emailField.delegate = self
         password.delegate = self
@@ -115,6 +139,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(loginButton)
         scrollView.addSubview(fbLoginButton)
         scrollView.addSubview(googleLogInBtn)
+        scrollView.addSubview(registerButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -132,7 +157,7 @@ class LoginViewController: UIViewController {
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
+            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 45),
             logoImageView.widthAnchor.constraint(equalToConstant: view.frame.size.width/2.5),
             logoImageView.heightAnchor.constraint(equalToConstant: view.frame.size.width/2),
         ])
@@ -164,10 +189,18 @@ class LoginViewController: UIViewController {
             loginButton.heightAnchor.constraint(equalToConstant: 52),
         ])
         
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            registerButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 10),
+            registerButton.widthAnchor.constraint(equalToConstant: view.width - 60),
+            registerButton.heightAnchor.constraint(equalToConstant: 52),
+        ])
+        
         fbLoginButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             fbLoginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            fbLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 25),
+            fbLoginButton.topAnchor.constraint(equalTo: registerButton.bottomAnchor, constant: 25),
             fbLoginButton.widthAnchor.constraint(equalToConstant: view.width - 60),
             fbLoginButton.heightAnchor.constraint(equalToConstant: 52),
         ])
@@ -215,7 +248,23 @@ class LoginViewController: UIViewController {
             }
             let uzytkownik = result.user
             
+            let safeEmail = DatabaseService.safeID(email: email)
+            DatabaseService.shared.getDataFor(path: safeEmail) { [weak self] (result) in
+                switch result {
+                case .success(let data):
+                    guard let userData = data as? [String: Any],
+                         let firstName = userData["first_name"] as? String,
+                         let lastName = userData["last_name"] as? String else {
+                        return
+                    }
+                    UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
+                case .failure(let error):
+                    print("\(error)")
+                }
+            }
+            
             UserDefaults.standard.setValue(email, forKey: "email")
+
             
             print("Zalogowano użytkownika \(uzytkownik)")
             self.dismiss(animated: true, completion: nil)
@@ -285,6 +334,9 @@ extension LoginViewController: LoginButtonDelegate {
                 }
             
             UserDefaults.standard.setValue(adresEmail, forKey: "email")
+            UserDefaults.standard.setValue("\(imieUzytkownika) \(nazwiskoUzytkownika)", forKey: "name")
+
+            
             
             DatabaseService.shared.czyUzytkownikIstnieje(with: adresEmail) { istnieje in
                 if !istnieje {

@@ -60,6 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
         
         UserDefaults.standard.setValue(adresEmail, forKey: "email")
+        UserDefaults.standard.setValue("\(imieUzytkownika) \(nazwiskoUzytkownika)", forKey: "name")
+
         
         
         DatabaseService.shared.czyUzytkownikIstnieje(with: uzytkownik.profile.email) { istnieje in
